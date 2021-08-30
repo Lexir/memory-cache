@@ -1,6 +1,9 @@
 package cache;
 
-import java.util.*;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class LRUCache<K, V> implements Cache<K, V> {
 
@@ -24,9 +27,7 @@ public class LRUCache<K, V> implements Cache<K, V> {
         if (key == null) {
             throw new NullPointerException("key == null");
         }
-        queue.remove(key);
-        queue.addFirst(key);  // move element to head
-        cache.toString();
+        moveToHead(key);
         return cache.get(key);
     }
 
@@ -38,23 +39,42 @@ public class LRUCache<K, V> implements Cache<K, V> {
         V cachedObject = cache.get(newKey);
         if (cachedObject == null) {
             if (currentSize == maxSize) {
-                K evictedKey = queue.removeLast();
-                cache.remove(evictedKey);
-                queue.add(newKey);
-                cache.put(newKey, newValue);
+                evict(newKey, newValue);
             } else {
-                cache.put(newKey, newValue);
-                queue.add(newKey);
-                currentSize++;
+                addNew(newKey, newValue);
             }
         } else {
-            queue.add(newKey);
-            cache.put(newKey, newValue);
+            rewriteObject(newKey, newValue);
         }
     }
 
     @Override
     public int size() {
         return currentSize;
+    }
+
+    private void addNew(K newKey, V newValue) {
+        cache.put(newKey, newValue);
+        queue.add(newKey);
+        currentSize++;
+    }
+
+    private void moveToHead(K key) {
+        if (cache.containsKey(key) && currentSize > 1) {
+            queue.remove(key);
+            queue.addFirst(key);
+        }
+    }
+
+    private void evict(K newKey, V newValue) {
+        K evictedKey = queue.removeLast();
+        queue.addFirst(newKey);
+        cache.remove(evictedKey);
+        cache.put(newKey, newValue);
+    }
+
+    private void rewriteObject(K newKey, V newValue) {
+        cache.put(newKey, newValue);
+        moveToHead(newKey);
     }
 }
