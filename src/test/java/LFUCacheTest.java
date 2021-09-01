@@ -114,4 +114,12 @@ public class LFUCacheTest {
                 cache.put(1, null));
         assertEquals("key or value == null", exception.getMessage());
     }
+
+    @Test
+    void getNotExistingElementByKey() {
+        cache.put(1, 1);
+        cache.put(2, 2);
+        Integer actual = cache.get(9999999);
+        assertNull(actual);
+    }
 }
