@@ -82,12 +82,13 @@ public class LFUCache<K, V> implements Cache<K, V> {
         });
     }
 
-    private void rewriteObject(K newKey, V newValue) {
-        cache.put(newKey, newValue);
-        frequency.stream()
-                .filter((key) -> key == newKey)
-                .findFirst()
-                .ifPresent(pair -> pair.second++);
+    private void rewriteObject(K key, V newValue) {
+        for (Pair<K, Integer> pair : frequency) {
+            if (pair.first == key) {
+                cache.put(key, newValue);
+                pair.second = 1;
+            }
+        }
     }
 
     private static class Pair<S, T> {

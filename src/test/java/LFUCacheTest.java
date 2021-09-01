@@ -122,4 +122,17 @@ public class LFUCacheTest {
         Integer actual = cache.get(9999999);
         assertNull(actual);
     }
+
+    @Test
+    void rewriteElement() {
+        cache.put(1, 1);
+        cache.put(2, 1);
+
+        cache.get(1);
+        cache.get(1);
+
+        cache.put(1, 2);
+        Integer actual = cache.get(1);
+        assertEquals(2, actual);
+    }
 }
