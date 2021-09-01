@@ -14,7 +14,7 @@ class LRUCacheTest {
     }
 
     @Test
-    void addOneElementOverCapacity() {
+    void evictItem() {
         for (int i = 1; i <= 5; i++) {
             cache.put(i, i);
         }
@@ -32,12 +32,12 @@ class LRUCacheTest {
     }
 
     @Test
-    void addOneElementOverCapacityAndGetLasElement() {
+    void evictItemAndReorderingElement() {
         for (int i = 1; i <= 4; i++) {
             cache.put(i, i);
         }
 
-        Integer actual4 = cache.get(4);
+        cache.get(4);
         cache.put(5, 5);
         Integer actual3 = cache.get(3);   // evicted element
         assertEquals(MAX_SIZE, cache.size());
@@ -56,6 +56,7 @@ class LRUCacheTest {
         Integer actual4 = cache.get(4); // evicted element
         Integer actual5 = cache.get(5);
         Integer actual6 = cache.get(6);
+
         assertEquals(MAX_SIZE, cache.size());
         assertEquals(1, actual1);
         assertEquals(2, actual2);

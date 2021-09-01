@@ -38,13 +38,17 @@ public class LRUCache<K, V> implements Cache<K, V> {
         }
         V cachedObject = cache.get(newKey);
         if (cachedObject == null) {
-            if (currentSize == maxSize) {
-                evict(newKey, newValue);
-            } else {
-                addNew(newKey, newValue);
-            }
+            insertOrEvict(newKey, newValue);
         } else {
             rewriteObject(newKey, newValue);
+        }
+    }
+
+    private void insertOrEvict(K newKey, V newValue) {
+        if (currentSize == maxSize) {
+            evict(newKey, newValue);
+        } else {
+            addNew(newKey, newValue);
         }
     }
 
